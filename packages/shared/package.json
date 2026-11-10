@@ -1,0 +1,34 @@
+{
+  "name": "@formfit/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts",
+    "./supabase/client": "./src/supabase/client.ts",
+    "./supabase/server": "./src/supabase/server.ts",
+    "./supabase/admin": "./src/supabase/admin.ts",
+    "./supabase/auth": "./src/supabase/auth.ts",
+    "./supabase/invitations": "./src/supabase/invitations.ts",
+    "./supabase/invitation-types": "./src/supabase/invitation-types.ts",
+    "./supabase/provisioning": "./src/supabase/provisioning.ts",
+    "./supabase/safe-redirect": "./src/supabase/safe-redirect.ts",
+    "./supabase/email-policy": "./src/supabase/email-policy.ts",
+    "./supabase/rate-limit": "./src/supabase/rate-limit.ts",
+    "./supabase/types": "./src/supabase/types.ts",
+    "./supabase/health": "./src/supabase/health.ts",
+    "./supabase/update-session": "./src/supabase/update-session.ts",
+    "./supabase/env": "./src/supabase/env.ts",
+    "./demo-mode": "./src/demo-mode.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.0",
+    "server-only": "^0.0.1"
+  },
+  "peerDependencies": {
+    "next": "^16",
+    "react": "^19"
+  }
+}

@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FormFit
 
-## Getting Started
+Monorepo for the FormFit fitness coaching platform.
 
-First, run the development server:
+## Apps
+
+| App | Package | Port | Description |
+|-----|---------|------|-------------|
+| Coach | `@formfit/coach` | 3000 | Coach dashboard — clients, workouts, diet plans |
+| Client | `@formfit/client` | 3001 | Client portal — workouts, meals, progress |
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| `@formfit/ui` | Shared UI primitives and design tokens |
+| `@formfit/shared` | Shared domain models, mock data, and localStorage helpers |
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev:coach    # http://localhost:3000
+npm run dev:client   # http://localhost:3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+From the coach app, open a client and click **View as Client** to launch the client portal for that person.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Shared client helpers live in `@formfit/shared/supabase/*`.
 
-## Learn More
+Each app needs credentials in `.env.local` (see each app’s `.env.example`). Auth setup: [`docs/AUTH.md`](docs/AUTH.md).
 
-To learn more about Next.js, take a look at the following resources:
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=   # server only
+COACH_ONBOARDING_SECRET=     # coach app only; optional
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Verify client initialization (no table queries):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+node scripts/check-supabase.mjs
+```
 
-## Deploy on Vercel
+### Database schema
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Versioned SQL migrations live in `supabase/migrations/`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Security model: [`supabase/SECURITY_MODEL.md`](supabase/SECURITY_MODEL.md)  
+Auth & onboarding: [`docs/AUTH.md`](docs/AUTH.md)  
+SQL tests: [`supabase/tests/security_hardening.sql`](supabase/tests/security_hardening.sql)
+
+1. Profiles + secure role provisioning + coach–client relationships  
+2. Exercises + editable workout plans + **immutable revisions** + assignments  
+3. Foods + editable diet plans + immutable revisions + assignments  
+4. Validated workout/meal tracking + progress  
+5. RLS + SECURITY DEFINER lockdown + inactive-relationship cancellation  
+6. `client_invitations` (pending apply — see AUTH.md; **not** auto-pushed)
+
+Coach roles are created only via `admin_set_user_role` with the **service_role** key on the server. Signups always get `client`.
+
+Apply locally with Docker (recommended before remote push):
+
+```bash
+npm run supabase:start
+npm run supabase:reset
+psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/tests/security_hardening.sql
+```
+
+Remote (only after tests pass and explicit confirmation):
+
+```bash
+npx supabase login
+npx supabase link --project-ref <project-ref>
+npx supabase db push --remote --dry-run
+npm run supabase:push
+```
+
+Generate TypeScript types after migrations apply:
+
+```bash
+npm run supabase:types
+```
+
+Authentication UI is implemented. Business data still uses mock/localStorage until a separate migration task.
+
+## Prototype notes
+
+- Coach auth: `/login`, `/signup`. Client auth: `/login`, `/invite/[token]`.
+- Mock client picker (development only): `http://localhost:3001/demo` (disabled in production builds).
+- Coach **View as Client** opens the client app in a new tab (`NEXT_PUBLIC_CLIENT_APP_URL`).
+- Demo client **Back to Coach** returns to the coach app (`NEXT_PUBLIC_COACH_APP_URL`).
+- Each app has its own origin (`localhost:3000` vs `localhost:3001`), so localStorage is **not** shared between them.
