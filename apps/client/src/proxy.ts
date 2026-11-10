@@ -1,14 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-import { isMockClientId } from "@formfit/shared/demo-mode"
+import { isDemoModeEnabled, isMockClientId } from "@formfit/shared/demo-mode"
 import { updateSession } from "@formfit/shared/supabase/update-session"
 
 /**
  * Next.js 16 session refresh proxy.
- * Also blocks demo/mock portal routes in production builds.
+ * Blocks demo/mock portal routes when demo mode is disabled.
  */
 export async function proxy(request: NextRequest) {
-  if (process.env.NODE_ENV === "production") {
+  if (!isDemoModeEnabled()) {
     const { pathname } = request.nextUrl
     if (pathname === "/demo" || pathname.startsWith("/demo/")) {
       const login = request.nextUrl.clone()

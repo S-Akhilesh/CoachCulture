@@ -1,12 +1,12 @@
 import { initialClients } from "./clients-data"
 
 /**
- * Demo / mock-client portal access is for local development only.
- * Production builds (`NODE_ENV === "production"`) never enable demo mode,
- * even if ALLOW_DEMO_PORTAL is set — set NODE_ENV appropriately for staging.
+ * Demo / mock-client portal access.
+ * Temporarily enabled in all environments for early previews.
+ * Set ALLOW_DEMO_PORTAL=false to disable (server/proxy only; prefer redeploying with this off later).
  */
 export function isDemoModeEnabled(): boolean {
-  return process.env.NODE_ENV !== "production"
+  return process.env.ALLOW_DEMO_PORTAL !== "false"
 }
 
 export function getMockClientIds(): string[] {
