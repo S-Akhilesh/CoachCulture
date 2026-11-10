@@ -1,3 +1,4 @@
+import { hasSupabasePublicConfig } from "./env"
 import { createClient as createServerClient } from "./server"
 import type { Database } from "./types"
 
@@ -23,6 +24,9 @@ export class AuthError extends Error {
 }
 
 export async function getAuthUser(): Promise<AuthUser | null> {
+  // Allow prerender/CI builds without env; treat as signed out.
+  if (!hasSupabasePublicConfig()) return null
+
   const supabase = await createServerClient()
   const { data, error } = await supabase.auth.getUser()
 
@@ -84,6 +88,8 @@ export async function requireClientProfile(): Promise<AuthenticatedProfile> {
 }
 
 export async function clientHasActiveCoach(clientId: string): Promise<boolean> {
+  if (!hasSupabasePublicConfig()) return false
+
   const supabase = await createServerClient()
   const { data, error } = await supabase
     .from("coach_clients")

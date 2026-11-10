@@ -27,7 +27,7 @@ export function getSupabasePublicConfig(): SupabasePublicConfig {
 
     throw new SupabaseConfigError(
       `Supabase is not configured. Missing: ${missing.join(", ")}. ` +
-        `Add these to the app's .env.local file.`
+        `Add these to the app's .env.local (local) or the host's environment variables (e.g. Vercel Project Settings → Environment Variables), then redeploy.`
     )
   }
 
