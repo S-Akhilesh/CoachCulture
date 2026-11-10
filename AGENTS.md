@@ -2,10 +2,11 @@
 
 ## FormFit monorepo
 
-This repo contains two Next.js apps and shared packages:
+This repo contains three Next.js apps and shared packages:
 
 - `apps/coach` — Coach Dashboard (`@formfit/coach`, port 3000)
 - `apps/client` — Client Portal (`@formfit/client`, port 3001)
+- `apps/landing` — Marketing site (`@formfit/landing`, port 3002)
 - `packages/ui` — shared UI primitives (`@formfit/ui`)
 - `packages/shared` — domain models + localStorage helpers (`@formfit/shared`)
 

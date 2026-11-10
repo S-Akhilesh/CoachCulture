@@ -8,6 +8,7 @@ Monorepo for the FormFit fitness coaching platform.
 |-----|---------|------|-------------|
 | Coach | `@formfit/coach` | 3000 | Coach dashboard — clients, workouts, diet plans |
 | Client | `@formfit/client` | 3001 | Client portal — workouts, meals, progress |
+| Landing | `@formfit/landing` | 3002 | Public marketing site |
 
 ## Packages
 
@@ -20,8 +21,11 @@ Monorepo for the FormFit fitness coaching platform.
 
 ```bash
 npm install
-npm run dev:coach    # http://localhost:3000
-npm run dev:client   # http://localhost:3001
+npm run dev:coach      # http://localhost:3000
+npm run dev:client     # http://localhost:3001
+npm run dev:landing    # http://localhost:3002
+# or all three:
+npm run dev
 ```
 
 From the coach app, open a client and click **View as Client** to launch the client portal for that person.
